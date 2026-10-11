@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Boeking bevestigen – RT Elite Transfer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@800;900&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+:root{
+  --road:#f2f1ec; --panel:#ffffff; --ink:#141a2b; --muted:#5b6274; --line:#d9d8d0;
+  --amber:#e8a317; --amber-ink:#7a4f00; --on-amber:#141a2b; --night:#141a2b; --on-night:#f2f1ec;
+  --display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
+  --body:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root{
+  --road:#0f1320; --panel:#171c2d; --ink:#ecebe4; --muted:#9aa0b3; --line:#2a3046;
+  --amber:#f2b632; --amber-ink:#f2b632; --night:#0a0d17; --on-night:#ecebe4; color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--road);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6}
+[hidden]{display:none!important}
+header{background:var(--night);color:var(--on-night)}
+.wrap{max-width:760px;margin:0 auto;padding-inline:20px}
+.bar{display:flex;align-items:center;gap:10px;padding-block:14px}
+.tag{background:var(--amber);color:var(--on-amber);font-family:var(--display);font-weight:900;font-size:1.25rem;padding:2px 8px;border-radius:3px}
+.name{font-family:var(--display);font-weight:800;font-size:1.3rem;letter-spacing:.06em;text-transform:uppercase}
+.checker{height:14px;background:repeating-conic-gradient(var(--ink) 0 25%,var(--amber) 0 50%) 0 0/14px 14px}
+main{padding-block:40px 64px;display:flex;flex-direction:column;gap:24px}
+h1{font-family:var(--display);font-weight:900;text-transform:uppercase;font-size:clamp(2rem,6vw,2.8rem);line-height:.95;margin:0}
+h2{font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:1.4rem;margin:0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:22px;display:flex;flex-direction:column;gap:14px}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:6px 18px;margin:0}
+dt{font-family:var(--mono);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding-top:2px}
+dd{margin:0;font-weight:500;min-width:0;overflow-wrap:anywhere}
+label{display:flex;flex-direction:column;gap:6px;font-weight:500}
+input,textarea{font:inherit;padding:11px 12px;border:1px solid var(--line);border-radius:4px;background:var(--road);color:var(--ink);width:100%}
+textarea{min-height:300px;resize:vertical;font-family:var(--body);line-height:1.5}
+.btns{display:flex;flex-wrap:wrap;gap:10px}
+.btn{display:inline-block;text-decoration:none;font-weight:600;padding:12px 18px;border-radius:4px;border:2px solid var(--ink);cursor:pointer;font-family:var(--body);font-size:1rem;background:transparent;color:var(--ink)}
+.btn.primary{background:var(--amber);border-color:var(--amber);color:var(--on-amber)}
+.note{font-size:.88rem;color:var(--muted);margin:0}
+.paybox{margin:0;padding:10px 12px;border-radius:4px;border:1px solid var(--amber);background:rgba(232,163,23,.12);font-weight:500}
+.eyebrow{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--amber-ink)}
+:focus-visible{outline:3px solid var(--amber);outline-offset:3px}
+@media (max-width:480px){dl{grid-template-columns:1fr}dt{padding-top:8px}}
+</style>
+</head>
+<body>
+<header><div class="wrap bar"><span class="tag">RT</span><span class="name">Elite Transfer</span></div></header>
+<div class="checker" aria-hidden="true"></div>
+
+<main class="wrap">
+  <div id="bad" class="card" hidden>
+    <h2>Link niet geldig</h2>
+    <p>Deze link bevat geen boekingsgegevens. Open de link opnieuw vanuit de boekingsmail.</p>
+  </div>
+
+  <div id="ok" hidden style="display:flex;flex-direction:column;gap:24px">
+    <div>
+      <span class="eyebrow">Alleen voor intern gebruik</span>
+      <h1>Boeking bevestigen</h1>
+    </div>
+
+    <p class="paybox" id="payStatus" hidden></p>
+
+    <section class="card">
+      <h2>Boeking</h2>
+      <dl id="summary"></dl>
+    </section>
+
+    <section class="card">
+      <h2>Bevestiging aan klant</h2>
+      <label for="price">Prijs in euro (vooraf ingevuld met de prijsindicatie, aan te passen)
+        <input id="price" inputmode="decimal" placeholder="bijv. 65">
+      </label>
+      <p class="paybox" id="payHint" hidden></p>
+      <label for="paylink" id="paylinkLabel">Betaallink (optioneel, van Mollie of Tikkie, begint met https://)
+        <input id="paylink" type="url" placeholder="https://…">
+      </label>
+      <label for="msg">Bericht
+        <textarea id="msg"></textarea>
+      </label>
+      <p class="note">U kunt de tekst hierboven nog aanpassen voordat u verstuurt.</p>
+      <div class="btns">
+        <a class="btn primary" id="mailBtn" href="#">Bevestig per e-mail</a>
+        <a class="btn" id="smsBtn" href="#">Bevestig per sms</a>
+        <button class="btn" type="button" id="copyBtn">Kopieer tekst</button>
+      </div>
+      <p class="note">Na het klikken opent uw e-mail- of sms-app met het bericht al ingevuld. Druk daar op verzenden.</p>
+    </section>
+
+    <section class="card" id="paidCard" hidden>
+      <h2>Online betaling ontvangen</h2>
+      <p class="note">Stuur dit pas als u in Mollie ziet dat de betaling binnen is. De klant krijgt dan bericht dat de rit online is voldaan.</p>
+      <div class="btns">
+        <a class="btn primary" id="paidMailBtn" href="#">Stuur betaalbevestiging per e-mail</a>
+        <a class="btn" id="paidSmsBtn" href="#">Per sms</a>
+      </div>
+    </section>
+
+    <section class="card" id="releaseCard" hidden>
+      <h2>Rit afwijzen</h2>
+      <p class="note">Kunt u deze rit niet rijden? Wijs hem af. De tijd komt dan weer vrij in uw agenda.</p>
+      <div class="btns" id="relStep1"><button class="btn" type="button" id="relBtn">Rit afwijzen en tijd vrijgeven</button></div>
+      <div class="btns" id="relStep2" hidden><button class="btn primary" type="button" id="relYes">Ja, afwijzen</button><button class="btn" type="button" id="relNo">Annuleren</button></div>
+      <p id="relMsg" class="note" hidden></p>
+      <div class="btns" id="relMailWrap" hidden><a class="btn" id="relMail" href="#">Stuur afwijzing per e-mail</a></div>
+    </section>
+
+    <section class="card">
+      <h2>Factuur</h2>
+      <p class="note">Maak na de rit een factuur met de gegevens van deze boeking. Prijs, datum en klantgegevens worden alvast ingevuld.</p>
+      <div class="btns"><a class="btn" id="invBtn" href="/factuur.html">Factuur maken</a></div>
+    </section>
+  </div>
+</main>
+
+<script>
+(function(){
+  let b=null;
+  try{ b=JSON.parse(decodeURIComponent(escape(atob(location.hash.slice(1))))); }catch(e){}
+  if(!b||!b.n){ document.getElementById('bad').hidden=false; return; }
+  document.getElementById('ok').hidden=false;
+
+  const rows=[['Naam',b.n],['Telefoon',b.p],['E-mail',b.e],['Ophalen',b.f],['Bestemming',b.t],
+    ['Datum',b.d],['Tijd',b.u],['Passagiers',b.x],['Koffers',b.k],['Betaalmethode',{pin:'Pin (in de auto)',contant:'Contant (in de auto)',online:'Online vooraf via Mollie'}[b.m]||'Niet opgegeven'],...(b.r?[['Terugrit',(b.r.w?'Chauffeur wacht ('+b.r.wm+' min, € '+b.r.wc+'). Vertrek ':'')+b.r.d+' om '+b.r.u+': '+b.r.f+' → '+b.r.t]]:[]),['Opmerkingen',b.o||'-'],[b.id?'Prijs':'Prijsindicatie',b.pi||'-'],['Taal klant',b.l==='en'?'Engels':'Nederlands']];
+  const dl=document.getElementById('summary');
+  rows.forEach(([k,v])=>{const dt=document.createElement('dt');dt.textContent=k;const dd=document.createElement('dd');dd.textContent=v||'-';if(k==='Prijsindicatie'||k==='Prijs'){dd.style.whiteSpace='pre-line';}dl.append(dt,dd);});
+
+  const en=b.l==='en';
+  let payState=null; // 'paid' | 'unpaid' | null
+  const ps=document.getElementById('payStatus');
+  const payLinkEl=document.getElementById('paylink');
+  function applyPayState(){
+    if(b.m!=='online') return;
+    const h=document.getElementById('payHint');
+    if(payState==='paid'){
+      ps.hidden=false;ps.textContent='✓ Online betaald via Mollie. De bevestiging hieronder vermeldt dat de rit al is betaald.';
+      h.hidden=true;payLinkEl.closest('label').hidden=true;document.getElementById('paidCard').hidden=true;
+    }else{
+      ps.hidden=false;ps.textContent=payState==='unpaid'
+        ?'Nog niet betaald: de online betaling is niet (of nog niet) gelukt.'
+        :'Betaalstatus onbekend. Controleer de betaling in Mollie.';
+      h.hidden=false;h.textContent='De klant kan alsnog online betalen via de link hieronder (die is al ingevuld), of in de auto met pin of contant.';
+      payLinkEl.closest('label').hidden=false;
+      if(!payLinkEl.value&&b.id) payLinkEl.value=location.origin+'/bedankt.html?id='+b.id;
+      document.getElementById('paidCard').hidden=false;
+    }
+    if(!edited) msg.value=build();
+    update();
+  }
+  if(b.id){
+    document.getElementById('releaseCard').hidden=false;
+    fetch('/api/status?id='+encodeURIComponent(b.id)).then(r=>r.json()).then(j=>{
+      if(j.status==='released'){ps.hidden=false;ps.textContent='Deze rit is afgewezen en de tijd is vrijgegeven.';document.getElementById('relStep1').hidden=true;return;}
+      if(b.m==='online'){payState=j.status==='paid'?'paid':(j.status?'unpaid':null);applyPayState();}
+    }).catch(()=>{if(b.m==='online')applyPayState();});
+  }else if(b.m==='online'){
+    // oude boekingen (van voor het automatisch betalen)
+    document.getElementById('paidCard').hidden=false;
+    const h=document.getElementById('payHint');h.hidden=false;
+    h.textContent='Deze klant wil online betalen. Maak in Mollie een betaallink voor het bedrag hieronder en plak die in het veld Betaallink.';
+  }
+  const subject=en?'Booking confirmation – RT Elite Transfer':'Bevestiging van uw rit – RT Elite Transfer';
+  const msg=document.getElementById('msg'), price=document.getElementById('price');
+  function build(){
+    const pr=price.value.trim().replace('.',',');
+    const prLine=pr?(b.r?(en?`Total price outbound and return: € ${pr} (incl. 9% VAT)\n`:`Totaalprijs heen en terug: € ${pr} (incl. 9% btw)\n`)
+                          :(en?`Price: € ${pr} (incl. 9% VAT)\n`:`Prijs: € ${pr} (incl. 9% btw)\n`)):'';
+    const wH=m=>{const h=Math.floor(m/60),mm=m%60;return (h?h+(en?' h ':' u '):'')+mm+' min';};
+    const waitLine=b.r&&b.r.w?(en?`The driver waits for you at the destination. Waiting time: ${wH(b.r.wm)} (€ ${b.r.wc})\n`:`De chauffeur wacht op u op de bestemming. Wachttijd: ${wH(b.r.wm)} (€ ${b.r.wc})\n`):'';
+    const retBlock=b.r?(en?`\nReturn trip\n${waitLine}Date: ${b.r.d}\n${b.r.w?'Departure':'Pickup'} time: ${b.r.u}\nPickup address: ${b.r.f}\nDestination: ${b.r.t}\n`
+                           :`\nTerugrit\n${waitLine}Datum: ${b.r.d}\n${b.r.w?'Vertrektijd':'Tijd'}: ${b.r.u}\nOphaaladres: ${b.r.f}\nBestemming: ${b.r.t}\n`):'';
+    const plRaw=document.getElementById('paylink').value.trim();
+    const pl=/^https:\/\/\S+$/i.test(plRaw)?plRaw:'';
+    const linkLine=pl?(en?`Would you rather pay online right away? Then click this link:\n${pl}\n`:`Wilt u liever de betaling meteen online doen? Klikt u dan op deze link:\n${pl}\n`):'';
+    let payBlock;
+    if(b.m==='online'&&payState==='paid'){
+      payBlock=en?`\nWe have already received your online payment. You do not need to pay anything in the car.\n`
+                 :`\nUw online betaling hebben wij al ontvangen. U hoeft in de auto niets meer te betalen.\n`;
+    }else if(b.m==='online'){
+      payBlock=pl
+        ?(en?`\nYou chose to pay online. Please pay for your ride in advance via this link:\n${pl}\nOnce we have received your payment, we will send you a payment confirmation.\n`
+            :`\nU heeft gekozen voor online betalen. Wilt u de rit vooraf betalen via deze link:\n${pl}\nZodra wij uw betaling hebben ontvangen, sturen wij u een betaalbevestiging.\n`)
+        :(en?`\nYou chose to pay online. You will receive a separate payment link from us to pay for your ride in advance.\n`
+            :`\nU heeft gekozen voor online betalen. U ontvangt van ons apart een betaallink om de rit vooraf te betalen.\n`);
+    }else if(b.m==='contant'){
+      payBlock=(en?`\nYou pay in cash in the car. We carry limited change, so please bring the exact amount if possible.\n`
+                  :`\nU betaalt contant in de auto. Wij hebben beperkt wisselgeld bij ons; wilt u daarom zo veel mogelijk gepast betalen?\n`)+(linkLine?'\n'+linkLine:'');
+    }else if(b.m==='pin'){
+      payBlock=(en?`\nYou pay by card in the car.\n`:`\nU betaalt met pin in de auto.\n`)+(linkLine?'\n'+linkLine:'');
+    }else{
+      payBlock=(en?`\nYou can pay in the car by card or cash.\n`:`\nU kunt in de auto betalen met pin of contant.\n`)+(linkLine?'\n'+linkLine:'');
+    }
+    return en
+? `Dear ${b.n},
+
+We hereby confirm your ride with RT Elite Transfer.
+
+Date: ${b.d}
+Time: ${b.u}
+Pickup address: ${b.f}
+Destination: ${b.t}
+Passengers: ${b.x}
+${retBlock}${prLine}${payBlock}
+Your driver will be ready for you at the agreed time. If you have any questions or would like to make changes, please contact us at +31 6 13123200 or rt-elitetransfer@outlook.com.
+
+Kind regards,
+RT Elite Transfer`
+: `Beste ${b.n},
+
+Hierbij bevestigen wij uw rit met RT Elite Transfer.
+
+Datum: ${b.d}
+Tijd: ${b.u}
+Ophaaladres: ${b.f}
+Bestemming: ${b.t}
+Passagiers: ${b.x}
+${retBlock}${prLine}${payBlock}
+Onze chauffeur staat op het afgesproken tijdstip voor u klaar. Heeft u vragen of wilt u iets wijzigen? Neem dan contact met ons op via +31 6 13123200 of rt-elitetransfer@outlook.com.
+
+Met vriendelijke groet,
+RT Elite Transfer`;
+  }
+  if(b.pr) price.value=b.pr;
+  let edited=false;
+  msg.value=build();
+  msg.addEventListener('input',()=>{edited=true;update();});
+  price.addEventListener('input',()=>{ if(!edited) msg.value=build(); update(); });
+  document.getElementById('paylink').addEventListener('input',()=>{ if(!edited) msg.value=build(); update(); });
+  function curLink(){const r=document.getElementById('paylink').value.trim();return /^https:\/\/\S+$/i.test(r)?r:'';}
+  function paidTexts(){
+    const pr=price.value.trim().replace('.',',');
+    const amt=pr?(en?` of € ${pr}`:` van € ${pr}`):'';
+    const mail=en
+? `Dear ${b.n},
+
+We have received your online payment${amt}. Your ride on ${b.d} at ${b.u} from ${b.f} to ${b.t} has been paid in full.
+
+You do not need to pay anything in the car.
+
+Kind regards,
+RT Elite Transfer`
+: `Beste ${b.n},
+
+Wij hebben uw online betaling${amt} in goede orde ontvangen. Uw rit op ${b.d} om ${b.u} van ${b.f} naar ${b.t} is hiermee volledig voldaan.
+
+U hoeft in de auto niets meer te betalen.
+
+Met vriendelijke groet,
+RT Elite Transfer`;
+    const sms=en?`RT Elite Transfer: we have received your payment${amt}. Your ride on ${b.d} at ${b.u} has been paid in full.`
+                :`RT Elite Transfer: wij hebben uw betaling${amt} ontvangen. Uw rit op ${b.d} om ${b.u} is volledig voldaan.`;
+    return {mail,sms};
+  }
+  function update(){
+    document.getElementById('mailBtn').href='mailto:'+encodeURIComponent(b.e)+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(msg.value);
+    const smsText=en
+      ? `RT Elite Transfer: your ride on ${b.d} at ${b.u} from ${b.f} to ${b.t} is confirmed.`+(b.r?` Return: ${b.r.d} at ${b.r.u}.`:'')+(price.value.trim()?` Price: € ${price.value.trim()}.`:'')+(curLink()?(b.m==='online'?' Please pay in advance: ':' Pay online: ')+curLink():(b.m==='online'?' You will receive a payment link.':b.m==='contant'?' Payment: cash in the car.':b.m==='pin'?' Payment: card in the car.':''))+' Questions? +31 6 13123200'
+      : `RT Elite Transfer: uw rit op ${b.d} om ${b.u} van ${b.f} naar ${b.t} is bevestigd.`+(b.r?` Terugrit: ${b.r.d} om ${b.r.u}.`:'')+(price.value.trim()?` Prijs: € ${price.value.trim().replace('.',',')}.`:'')+(curLink()?(b.m==='online'?' Graag vooraf betalen via: ':' Online betalen: ')+curLink():(b.m==='online'?' U ontvangt een betaallink.':b.m==='contant'?' Betaling: contant in de auto.':b.m==='pin'?' Betaling: pin in de auto.':''))+' Vragen? +31 6 13123200';
+    const inv={n:b.n,e:b.e,d:b.d,f:b.f,t:b.t,pr:price.value.trim(),m:b.m||'',r:b.r||null};
+    document.getElementById('invBtn').href='/factuur.html#'+btoa(unescape(encodeURIComponent(JSON.stringify(inv))));
+    if(b.m==='online'){
+      const pt=paidTexts();
+      document.getElementById('paidMailBtn').href='mailto:'+encodeURIComponent(b.e)+'?subject='+encodeURIComponent(en?'Payment received – RT Elite Transfer':'Betaling ontvangen – RT Elite Transfer')+'&body='+encodeURIComponent(pt.mail);
+      document.getElementById('paidSmsBtn').href='sms:'+b.p.replace(/[^\d+]/g,'')+'?&body='+encodeURIComponent(pt.sms);
+    }
+    document.getElementById('smsBtn').href='sms:'+b.p.replace(/[^\d+]/g,'')+'?&body='+encodeURIComponent(smsText);
+  }
+  update();
+  // ----- rit afwijzen -----
+  const relBtn=document.getElementById('relBtn');
+  if(relBtn){
+    relBtn.addEventListener('click',()=>{document.getElementById('relStep1').hidden=true;document.getElementById('relStep2').hidden=false;});
+    document.getElementById('relNo').addEventListener('click',()=>{document.getElementById('relStep1').hidden=false;document.getElementById('relStep2').hidden=true;});
+    document.getElementById('relYes').addEventListener('click',async()=>{
+      const m=document.getElementById('relMsg');m.hidden=false;m.textContent='Bezig…';
+      try{
+        const r=await fetch('/api/release',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:b.id,key:b.key})});
+        const j=await r.json();if(!r.ok) throw j;
+        document.getElementById('relStep2').hidden=true;
+        m.textContent='De rit is afgewezen en de tijd is weer vrij in uw agenda.'+(j.wasPaid?' Let op: deze klant heeft al online betaald. Betaal het bedrag terug in Mollie (open de betaling en kies Terugbetalen).':'');
+        const body=en
+? `Dear ${b.n},
+
+Unfortunately we are unable to carry out your ride on ${b.d} at ${b.u} from ${b.f} to ${b.t}${b.r?' and the return trip on '+b.r.d+' at '+b.r.u:''}.${j.wasPaid?' We will refund your payment in full; you will receive it within a few working days.':''}
+
+Our apologies for the inconvenience.
+
+Kind regards,
+RT Elite Transfer`
+: `Beste ${b.n},
+
+Helaas kunnen wij uw rit op ${b.d} om ${b.u} van ${b.f} naar ${b.t}${b.r?' en de terugrit op '+b.r.d+' om '+b.r.u:''} niet uitvoeren.${j.wasPaid?' Uw betaling storten wij volledig terug; u ontvangt deze binnen enkele werkdagen.':''}
+
+Excuses voor het ongemak.
+
+Met vriendelijke groet,
+RT Elite Transfer`;
+        document.getElementById('relMail').href='mailto:'+encodeURIComponent(b.e)+'?subject='+encodeURIComponent(en?'Your ride – RT Elite Transfer':'Uw rit – RT Elite Transfer')+'&body='+encodeURIComponent(body);
+        document.getElementById('relMailWrap').hidden=false;
+      }catch(e){m.textContent='Afwijzen is niet gelukt. Probeer het opnieuw.';document.getElementById('relStep2').hidden=true;document.getElementById('relStep1').hidden=false;}
+    });
+  }
+  const copyBtn=document.getElementById('copyBtn');
+  copyBtn.addEventListener('click',()=>{
+    navigator.clipboard.writeText(msg.value).then(()=>{copyBtn.textContent='Gekopieerd';},()=>{msg.select();copyBtn.textContent='Geselecteerd';});
+    setTimeout(()=>copyBtn.textContent='Kopieer tekst',2500);
+  });
+})();
+</script>
+</body>
+</html>

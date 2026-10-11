@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Bedankt | RT Elite Transfer</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@800;900&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+:root{
+  --road:#f2f1ec; --panel:#ffffff; --ink:#141a2b; --muted:#5b6274; --line:#d9d8d0;
+  --amber:#e8a317; --amber-ink:#7a4f00; --on-amber:#141a2b; --night:#141a2b; --on-night:#f2f1ec;
+  --display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
+  --body:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root{
+  --road:#0f1320; --panel:#171c2d; --ink:#ecebe4; --muted:#9aa0b3; --line:#2a3046;
+  --amber:#f2b632; --amber-ink:#f2b632; --night:#0a0d17; --on-night:#ecebe4; color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--road);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.7}
+header{background:var(--night);color:var(--on-night)}
+.wrap{max-width:780px;margin:0 auto;padding-inline:20px}
+.bar{display:flex;align-items:center;gap:16px;padding-block:14px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit;margin-right:auto}
+.tag{background:var(--amber);color:var(--on-amber);font-family:var(--display);font-weight:900;font-size:1.25rem;padding:2px 8px;border-radius:3px}
+.name{font-family:var(--display);font-weight:800;font-size:1.3rem;letter-spacing:.06em;text-transform:uppercase}
+.back{color:inherit;font-weight:500;text-decoration:none;padding:8px 12px;border:1px solid rgba(255,255,255,.3);border-radius:4px;font-size:.92rem}
+.lang{display:flex;border:1px solid rgba(255,255,255,.3);border-radius:4px;overflow:hidden}
+.lang button{background:none;border:0;color:inherit;font:600 .8rem var(--mono);padding:7px 10px;cursor:pointer}
+.lang button[aria-pressed="true"]{background:var(--on-night);color:var(--night)}
+.checker{height:14px;background:repeating-conic-gradient(var(--ink) 0 25%,var(--amber) 0 50%) 0 0/14px 14px}
+main{padding-block:48px 72px}
+h1{font-family:var(--display);font-weight:900;text-transform:uppercase;font-size:clamp(2.4rem,7vw,3.4rem);line-height:.95;margin:0 0 8px;text-wrap:balance}
+h2{font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:1.5rem;line-height:1;margin:40px 0 12px}
+p,li{max-width:65ch}
+p{margin:0 0 12px}
+ul{padding-left:20px;margin:0 0 12px}
+.meta{font-family:var(--mono);font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--panel);margin:8px 0 12px}
+table{border-collapse:collapse;width:100%;min-width:520px;font-size:.94rem}
+th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:400}
+tr:last-child td{border-bottom:0}
+a{color:var(--amber-ink)}
+[hidden]{display:none!important}
+footer{background:var(--night);color:var(--on-night)}
+footer .wrap{padding-block:24px;font-size:.9rem}
+:focus-visible{outline:3px solid var(--amber);outline-offset:3px}
+.result{display:flex;flex-direction:column;gap:16px;max-width:640px}
+.badge{display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:50%;font-size:2rem;font-weight:900;background:var(--amber);color:var(--on-amber)}
+.badge.fail{background:#c2410c;color:#fff}
+.badge.wait{background:var(--line);color:var(--ink)}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:20px;display:flex;flex-direction:column;gap:10px}
+.btns{display:flex;flex-wrap:wrap;gap:10px}
+.btn{display:inline-block;text-decoration:none;font-weight:600;padding:12px 18px;border-radius:4px;border:2px solid var(--ink);cursor:pointer;font-family:var(--body);font-size:1rem;background:transparent;color:var(--ink)}
+.btn.primary{background:var(--amber);border-color:var(--amber);color:var(--on-amber)}
+.row{display:flex;justify-content:space-between;gap:16px;border-bottom:1px solid var(--line);padding-bottom:6px}
+.row:last-child{border-bottom:0}
+.row span:first-child{color:var(--muted)}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap bar">
+    <a class="brand" href="/"><span class="tag">RT</span><span class="name">Elite Transfer</span></a>
+    <div class="lang" role="group" aria-label="Taal / Language">
+      <button type="button" data-lang="nl" aria-pressed="true">NL</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+    <a class="back" href="/" id="backLink">← Terug</a>
+  </div>
+</header>
+<div class="checker" aria-hidden="true"></div>
+
+<main class="wrap">
+  <div class="result" id="res" aria-live="polite">
+    <span class="badge wait" id="badge">…</span>
+    <h1 id="title">Een moment…</h1>
+    <p id="text"></p>
+    <div class="box" id="details" hidden></div>
+    <div class="btns" id="actions"></div>
+    <p class="note" id="contact" style="color:var(--muted);font-size:.92rem"></p>
+  </div>
+</main>
+
+<div class="checker" aria-hidden="true"></div>
+<footer><div class="wrap">© 2026 RT Elite Transfer · KVK 97653136</div></footer>
+
+<script>
+(function(){
+  const $=id=>document.getElementById(id);
+  let lang='nl';try{lang=localStorage.getItem('rt-lang')||'nl'}catch(e){}
+  const params=new URLSearchParams(location.search), id=params.get('id')||'';
+  const T={
+    nl:{wait:'Uw betaling wordt verwerkt…',waitD:'Een moment geduld, wij controleren uw betaling bij Mollie.',
+      paid:'Bedankt voor uw betaling',paidD:'Wij hebben uw betaling in goede orde ontvangen. Uw boeking wordt zo snel mogelijk door ons bevestigd per e-mail of sms. In de auto hoeft u niets meer te betalen.',
+      slow:'Wij hebben uw betaling nog niet ontvangen',slowD:'Heeft u betaald? Dan wordt dit meestal binnen enkele minuten verwerkt. Vernieuw deze pagina later, of probeer opnieuw te betalen.',
+      fail:'De betaling is niet gelukt',failD:'Uw betaling is geannuleerd of mislukt. U kunt het opnieuw proberen. Liever in de auto betalen met pin of contant? Neem dan contact met ons op.',
+      released:'Deze boeking is niet meer actief',releasedD:'Neem contact met ons op als u vragen heeft.',
+      req:'Bedankt voor uw boekingsverzoek',reqD:'Wij bevestigen uw boeking zo snel mogelijk per e-mail of sms.',
+      none:'Bedankt',noneD:'Heeft u vragen over uw boeking of betaling? Neem contact met ons op.',
+      retry:'Opnieuw betalen',refresh:'Pagina vernieuwen',home:'Naar de homepagina',busy:'Bezig…',
+      retryErr:'Opnieuw betalen lukt nu niet. Neem contact met ons op.',taken:'Deze tijd is inmiddels niet meer beschikbaar. Neem contact met ons op.',
+      date:'Datum',time:'Tijd',amount:'Bedrag',ret:'Terugrit',waitT:'Wachttijd',contact:'Vragen? Bel of app +31 6 13123200 of mail rt-elitetransfer@outlook.com.'},
+    en:{wait:'Processing your payment…',waitD:'One moment please, we are checking your payment with Mollie.',
+      paid:'Thank you for your payment',paidD:'We have received your payment. We will confirm your booking as soon as possible by email or text message. You do not need to pay anything in the car.',
+      slow:'We have not received your payment yet',slowD:'Have you paid? It is usually processed within a few minutes. Please refresh this page later, or try to pay again.',
+      fail:'The payment was not successful',failD:'Your payment was cancelled or failed. You can try again. Would you rather pay by card or cash in the car? Please contact us.',
+      released:'This booking is no longer active',releasedD:'Please contact us if you have any questions.',
+      req:'Thank you for your booking request',reqD:'We will confirm your booking as soon as possible by email or text message.',
+      none:'Thank you',noneD:'Questions about your booking or payment? Please contact us.',
+      retry:'Pay again',refresh:'Refresh page',home:'Go to homepage',busy:'Working…',
+      retryErr:'Paying again is not possible right now. Please contact us.',taken:'This time is no longer available. Please contact us.',
+      date:'Date',time:'Time',amount:'Amount',ret:'Return trip',waitT:'Waiting time',contact:'Questions? Call or WhatsApp +31 6 13123200 or email rt-elitetransfer@outlook.com.'}
+  };
+  let L=T[lang==='en'?'en':'nl'];
+  function setLang(l){
+    lang=l;L=T[l];document.documentElement.lang=l;
+    document.querySelectorAll('.lang button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.lang===l));
+    $('backLink').textContent=l==='en'?'← Back':'← Terug';
+    try{localStorage.setItem('rt-lang',l)}catch(e){}
+    render();
+  }
+  document.querySelectorAll('.lang button').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.lang)));
+  let state='wait', info=null, msg='';
+  const fmtDate=d=>{if(!d)return'';const[y,m,dd]=d.split('-');return dd+'-'+m+'-'+y};
+  const money=n=>lang==='en'?'€ '+n.toFixed(2):'€ '+n.toFixed(2).replace('.',',');
+  function btn(label,cls,onClick,href){const a=document.createElement(href?'a':'button');a.className='btn '+(cls||'');a.textContent=label;if(href)a.href=href;else{a.type='button';a.addEventListener('click',onClick);}return a;}
+  function render(){
+    const map={wait:['wait','…'],paid:['','✓'],slow:['wait','…'],fail:['fail','!'],released:['fail','!'],req:['','✓'],none:['','✓']};
+    const [cls,sym]=map[state];$('badge').className='badge '+cls;$('badge').textContent=sym;
+    $('title').textContent=L[state];$('text').textContent=msg||L[state+'D'];
+    const d=$('details');d.textContent='';d.hidden=!info||!info.date;
+    if(info&&info.date){[[L.date,fmtDate(info.date)],[L.time,info.time]].concat(info.ret&&info.ret.wait?[[L.waitT,info.ret.waitMin+' min']]:[]).concat(info.ret?[[L.ret,fmtDate(info.ret.date)+' '+info.ret.time]]:[]).concat([[L.amount,money(info.price)]]).forEach(([k,v])=>{const r=document.createElement('div');r.className='row';const a=document.createElement('span');a.textContent=k;const b=document.createElement('span');b.textContent=v;r.append(a,b);d.append(r);});}
+    const ac=$('actions');ac.textContent='';
+    if(state==='fail'||state==='slow') ac.append(btn(L.retry,'primary',retry));
+    if(state==='slow') ac.append(btn(L.refresh,'',()=>location.reload()));
+    ac.append(btn(L.home,state==='paid'||state==='req'||state==='none'?'primary':'',null,'/'));
+    $('contact').textContent=L.contact;
+  }
+  async function retry(e){
+    e.target.disabled=true;e.target.textContent=L.busy;
+    try{
+      const r=await fetch('/api/pay',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})});
+      const j=await r.json();
+      if(j.checkoutUrl){location.href=j.checkoutUrl;return;}
+      if(j.error==='already_paid'){check(0);return;}
+      msg=j.error==='slot_taken'||j.error==='too_soon'?L.taken:L.retryErr;state='fail';render();
+    }catch(err){msg=L.retryErr;state='fail';render();}
+  }
+  async function check(n){
+    if(!id){state='none';render();return;}
+    try{
+      const r=await fetch('/api/status?id='+encodeURIComponent(id));
+      const j=await r.json();
+      if(!r.ok){state='none';render();return;}
+      info=j;msg='';
+      if(j.status==='paid') state='paid';
+      else if(j.status==='payment_failed') state='fail';
+      else if(j.status==='released') state='released';
+      else if(j.status==='requested') state='req';
+      else if(j.status==='awaiting_payment'){
+        if(n<10){state='wait';render();setTimeout(()=>check(n+1),3000);return;}
+        state='slow';
+      }
+      render();
+    }catch(e){state='none';render();}
+  }
+  setLang(lang==='en'?'en':'nl');
+  check(0);
+})();
+</script>
+</body>
+</html>
