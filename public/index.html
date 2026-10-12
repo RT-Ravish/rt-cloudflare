@@ -672,6 +672,14 @@ footer .mono{font-family:var(--mono);opacity:.75}
     window.scrollTo(0,0);
   }
   window.addEventListener('hashchange',show);show();
+  // Terug vanaf de betaalpagina van Mollie (vorige-knop): toon de status van die betaling
+  function backFromPayment(){
+    try{const p=JSON.parse(sessionStorage.getItem('rt-pending')||'null');if(p&&p.id)location.replace('/bedankt.html?id='+encodeURIComponent(p.id));}catch(e){}
+  }
+  window.addEventListener('pageshow',e=>{
+    let nav='';try{nav=(performance.getEntriesByType('navigation')[0]||{}).type||''}catch(err){}
+    if(e.persisted||nav==='back_forward') backFromPayment();
+  });
   menuBtn.addEventListener('click',()=>{const o=nav.classList.toggle('open');menuBtn.setAttribute('aria-expanded',o)});
 
   const km=document.getElementById('km'),min=document.getElementById('min'),wait=document.getElementById('wait');
@@ -982,7 +990,10 @@ ${t('m.pay')}: ${t('pay.'+v('bPay'))}`;
     res.blockFrom=null;res.blockTo=null;
     if(bq){const e=slotEpoch(v('bDate'),v('bTime'));res.blockFrom=e-bq.approachMin*60000;res.blockTo=e+(bq.rideMin+bq.afterMin)*60000;}
     try{await notify(res);}catch(e){}
-    if(res.checkoutUrl){showBox('redirect');location.href=res.checkoutUrl;return;}
+    if(res.checkoutUrl){
+      try{sessionStorage.setItem('rt-pending',JSON.stringify({id:res.id,key:res.key}))}catch(e){}
+      showBox('redirect');location.href=res.checkoutUrl;return;
+    }
     showBox('ok');resetBooking();submitBtn.disabled=false;
   }
   const copyBtn=document.getElementById('copyBtn');

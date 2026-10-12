@@ -95,11 +95,16 @@ footer .wrap{padding-block:24px;font-size:.9rem}
   const $=id=>document.getElementById(id);
   let lang='nl';try{lang=localStorage.getItem('rt-lang')||'nl'}catch(e){}
   const params=new URLSearchParams(location.search), id=params.get('id')||'';
+  let pending=null;try{const p=JSON.parse(sessionStorage.getItem('rt-pending')||'null');if(p&&p.id===id)pending=p;}catch(e){}
+  const clearPending=()=>{try{sessionStorage.removeItem('rt-pending')}catch(e){}};
   const T={
     nl:{wait:'Uw betaling wordt verwerkt…',waitD:'Een moment geduld, wij controleren uw betaling bij Mollie.',
       paid:'Bedankt voor uw betaling',paidD:'Wij hebben uw betaling in goede orde ontvangen. Uw boeking wordt zo snel mogelijk door ons bevestigd per e-mail of sms. In de auto hoeft u niets meer te betalen.',
       slow:'Wij hebben uw betaling nog niet ontvangen',slowD:'Heeft u betaald? Dan wordt dit meestal binnen enkele minuten verwerkt. Vernieuw deze pagina later, of probeer opnieuw te betalen.',
       fail:'De betaling is niet gelukt',failD:'Uw betaling is geannuleerd of mislukt. U kunt het opnieuw proberen. Liever in de auto betalen met pin of contant? Neem dan contact met ons op.',
+      open:'Uw betaling is nog niet afgerond',openD:'U heeft de betaling bij Mollie niet afgerond, dus uw rit is nog niet betaald. Wij houden uw gekozen tijd nog {m} minuten voor u vast.',
+      openGone:'U heeft de betaling bij Mollie niet afgerond, dus uw rit is nog niet betaald. Rond de betaling af of kies een andere tijd.',
+      resume:'Verder met betalen',other:'Andere tijd kiezen',otherErr:'Dit lukt nu niet. Probeer het opnieuw of neem contact met ons op.',
       released:'Deze boeking is niet meer actief',releasedD:'Neem contact met ons op als u vragen heeft.',
       req:'Bedankt voor uw boekingsverzoek',reqD:'Wij bevestigen uw boeking zo snel mogelijk per e-mail of sms.',
       none:'Bedankt',noneD:'Heeft u vragen over uw boeking of betaling? Neem contact met ons op.',
@@ -110,6 +115,9 @@ footer .wrap{padding-block:24px;font-size:.9rem}
       paid:'Thank you for your payment',paidD:'We have received your payment. We will confirm your booking as soon as possible by email or text message. You do not need to pay anything in the car.',
       slow:'We have not received your payment yet',slowD:'Have you paid? It is usually processed within a few minutes. Please refresh this page later, or try to pay again.',
       fail:'The payment was not successful',failD:'Your payment was cancelled or failed. You can try again. Would you rather pay by card or cash in the car? Please contact us.',
+      open:'Your payment has not been completed',openD:'You did not complete the payment at Mollie, so your ride has not been paid yet. We will hold your chosen time for another {m} minutes.',
+      openGone:'You did not complete the payment at Mollie, so your ride has not been paid yet. Please complete the payment or choose another time.',
+      resume:'Continue to payment',other:'Choose another time',otherErr:'This is not possible right now. Please try again or contact us.',
       released:'This booking is no longer active',releasedD:'Please contact us if you have any questions.',
       req:'Thank you for your booking request',reqD:'We will confirm your booking as soon as possible by email or text message.',
       none:'Thank you',noneD:'Questions about your booking or payment? Please contact us.',
@@ -126,18 +134,20 @@ footer .wrap{padding-block:24px;font-size:.9rem}
     render();
   }
   document.querySelectorAll('.lang button').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.lang)));
-  let state='wait', info=null, msg='';
+  let state='wait', info=null, msg='', holdLeft=0;
   const fmtDate=d=>{if(!d)return'';const[y,m,dd]=d.split('-');return dd+'-'+m+'-'+y};
   const money=n=>lang==='en'?'€ '+n.toFixed(2):'€ '+n.toFixed(2).replace('.',',');
   function btn(label,cls,onClick,href){const a=document.createElement(href?'a':'button');a.className='btn '+(cls||'');a.textContent=label;if(href)a.href=href;else{a.type='button';a.addEventListener('click',onClick);}return a;}
   function render(){
-    const map={wait:['wait','…'],paid:['','✓'],slow:['wait','…'],fail:['fail','!'],released:['fail','!'],req:['','✓'],none:['','✓']};
+    const map={wait:['wait','…'],paid:['','✓'],slow:['wait','…'],open:['fail','!'],fail:['fail','!'],released:['fail','!'],req:['','✓'],none:['','✓']};
     const [cls,sym]=map[state];$('badge').className='badge '+cls;$('badge').textContent=sym;
-    $('title').textContent=L[state];$('text').textContent=msg||L[state+'D'];
+    $('title').textContent=L[state];$('text').textContent=msg||(state==='open'?(holdLeft>0?L.openD.replace('{m}',holdLeft):L.openGone):L[state+'D']);
     const d=$('details');d.textContent='';d.hidden=!info||!info.date;
     if(info&&info.date){[[L.date,fmtDate(info.date)],[L.time,info.time]].concat(info.ret&&info.ret.wait?[[L.waitT,info.ret.waitMin+' min']]:[]).concat(info.ret?[[L.ret,fmtDate(info.ret.date)+' '+info.ret.time]]:[]).concat([[L.amount,money(info.price)]]).forEach(([k,v])=>{const r=document.createElement('div');r.className='row';const a=document.createElement('span');a.textContent=k;const b=document.createElement('span');b.textContent=v;r.append(a,b);d.append(r);});}
     const ac=$('actions');ac.textContent='';
+    if(state==='open') ac.append(btn(L.resume,'primary',retry));
     if(state==='fail'||state==='slow') ac.append(btn(L.retry,'primary',retry));
+    if(state==='open'||state==='fail') ac.append(btn(L.other,'',other));
     if(state==='slow') ac.append(btn(L.refresh,'',()=>location.reload()));
     ac.append(btn(L.home,state==='paid'||state==='req'||state==='none'?'primary':'',null,'/'));
     $('contact').textContent=L.contact;
@@ -152,21 +162,36 @@ footer .wrap{padding-block:24px;font-size:.9rem}
       msg=j.error==='slot_taken'||j.error==='too_soon'?L.taken:L.retryErr;state='fail';render();
     }catch(err){msg=L.retryErr;state='fail';render();}
   }
+  async function other(e){
+    if(state==='open'&&pending&&pending.key){
+      e.target.disabled=true;e.target.textContent=L.busy;
+      try{
+        const r=await fetch('/api/release',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,key:pending.key,unpaidOnly:true})});
+        const j=await r.json().catch(()=>({}));
+        if(j.error==='already_paid'){check(0);return;}
+        if(!r.ok){msg=L.otherErr;render();return;}
+      }catch(err){msg=L.otherErr;render();return;}
+    }
+    clearPending();location.href='/#book';
+  }
   async function check(n){
     if(!id){state='none';render();return;}
     try{
       const r=await fetch('/api/status?id='+encodeURIComponent(id));
       const j=await r.json();
       if(!r.ok){state='none';render();return;}
-      info=j;msg='';
+      info=j;msg='';holdLeft=j.holdLeft||0;
       if(j.status==='paid') state='paid';
       else if(j.status==='payment_failed') state='fail';
       else if(j.status==='released') state='released';
       else if(j.status==='requested') state='req';
       else if(j.status==='awaiting_payment'){
+        // 'open' bij Mollie = de klant is afgehaakt zonder te betalen
+        if(j.pay==='open'&&n>=1){state='open';render();return;}
         if(n<10){state='wait';render();setTimeout(()=>check(n+1),3000);return;}
         state='slow';
       }
+      if(['paid','released','req'].includes(state)) clearPending();
       render();
     }catch(e){state='none';render();}
   }
